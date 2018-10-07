@@ -7,5 +7,7 @@ The notebook gatherGames.ipynb is an explained version of the previous script.
 ChampionStats is a quick example on how to work on gathered data, targeting champion especially.
 
 If you have trouble reading the notebooks on Github, use nbviewer : 
+
 https://nbviewer.jupyter.org/github/Canisback/LoLWorlds2018/blob/master/gatherGames.ipynb
+
 https://nbviewer.jupyter.org/github/Canisback/LoLWorlds2018/blob/master/ChampionStats.ipynb
