@@ -24,7 +24,7 @@ for bracketId in brackets:
             game = match['games'][gameUuid]
             
             if 'gameId' in game:
-                games[gameUuid] = {"matchHistoryId":game['gameId'], "matchId":matchId }
+                games[gameUuid] = {"matchHistoryId":game['gameId'], "matchId":matchId, "realm":game["gameRealm"]}
                 
                 
 if os.path.isdir("./games"):
@@ -46,19 +46,23 @@ for matchId in matches:
         except:
             print("Game "+str(i["id"]) + "has no hash")
             
-baseMatchHistoryStatsUrl = "https://acs.leagueoflegends.com/v1/stats/game/TRLH2/"
+baseMatchHistoryStatsUrl = "https://acs.leagueoflegends.com/v1/stats/game/{}/"
+
 for gameUuid in games:
     if gameUuid in gamesSaved:
         continue
+    try:
         
-    r  = requests.get(baseMatchHistoryStatsUrl + games[gameUuid]["matchHistoryId"] + "?gameHash="+ games[gameUuid]["hash"])
-    if r.status_code == 200:
-        gameData = json.loads(r.text)
-        r = requests.get(baseMatchHistoryStatsUrl + games[gameUuid]["matchHistoryId"] + "/timeline?gameHash="+ games[gameUuid]["hash"])
+        r  = requests.get(baseMatchHistoryStatsUrl.format(games[gameUuid]["realm"]) + games[gameUuid]["matchHistoryId"] + "?gameHash="+ games[gameUuid]["hash"])
         if r.status_code == 200:
-            gameData["timeline"] = json.loads(r.text)
-            
-            with open("./games/"+gameUuid+".json","w") as file:
-                file.write(json.dumps(gameData))
-    else:
-        print("Game "+gameUuid+" code error: "+str( r.status_code))
+            gameData = json.loads(r.text)
+            r = requests.get(baseMatchHistoryStatsUrl.format(games[gameUuid]["realm"]) + games[gameUuid]["matchHistoryId"] + "/timeline?gameHash="+ games[gameUuid]["hash"])
+            if r.status_code == 200:
+                gameData["timeline"] = json.loads(r.text)
+
+                with open("./games/"+gameUuid+".json","w") as file:
+                    file.write(json.dumps(gameData))
+        else:
+            print("Game "+gameUuid+" code error: "+str( r.status_code))
+    except:#for games ongoing
+        pass
