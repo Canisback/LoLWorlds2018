@@ -24,7 +24,7 @@ for bracketId in brackets:
             game = match['games'][gameUuid]
             
             if 'gameId' in game:
-                games[gameUuid] = {"matchHistoryId":game['gameId'], "matchId":matchId, "realm":game["gameRealm"]}
+                games[gameUuid] = {"matchHistoryId":game['gameId'], "matchId":matchId, "realm":game["gameRealm"], "phase":bracket["groupName"]}
                 
                 
 if os.path.isdir("./games"):
@@ -56,6 +56,7 @@ for gameUuid in games:
         r  = requests.get(baseMatchHistoryStatsUrl.format(games[gameUuid]["realm"]) + games[gameUuid]["matchHistoryId"] + "?gameHash="+ games[gameUuid]["hash"])
         if r.status_code == 200:
             gameData = json.loads(r.text)
+            gameData["phase"] = games[gameUuid]["phase"]
             r = requests.get(baseMatchHistoryStatsUrl.format(games[gameUuid]["realm"]) + games[gameUuid]["matchHistoryId"] + "/timeline?gameHash="+ games[gameUuid]["hash"])
             if r.status_code == 200:
                 gameData["timeline"] = json.loads(r.text)
